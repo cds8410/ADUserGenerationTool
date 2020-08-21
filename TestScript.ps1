@@ -5,6 +5,17 @@
 # -UPN
 # -Password
 
+#Collect the number of users that need to be created
+{
+    try {
+        [int]$numberOfUsers = Read-Host -Prompt "Please enter the number of users to be created: "
+    }
+    catch {
+        Write-Host "There was a problem with this entry. Closing"
+    }
+}
+   
+
 
 #Get an array of the first names in the test file
 {
@@ -40,7 +51,7 @@
 }
 
 #Build a User
-{
+function Add-RandomADUser{
     $RandFirstNames = Get-Random -Maximum ($FirstNames.count + 1)
     $RandLastNames = Get-Random -Maximum ($LastNames.count + 1)
     $RandomNumberPassword = Get-Random -Maximum 100000 -Minimum 
@@ -51,7 +62,7 @@
 
     $NewUserUPN = "$NewUserFirstName.$NewUserLastName@$Domain"
 
-    {New-ADUser -UserPrincipalName $NewUserUPN -AccountPassword "!!$RandomNumberPassword!!" 
-        -ChangePasswordAtLogon True -GivenName $NewUserFirstName -Surname $NewUserLastName}
+    { New-ADUser -UserPrincipalName $NewUserUPN -AccountPassword "!!$RandomNumberPassword!!" 
+        -ChangePasswordAtLogon True -GivenName $NewUserFirstName -Surname $NewUserLastName }
 
 }
