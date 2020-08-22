@@ -15,11 +15,10 @@
     }
 }
    
-
-
 #Get an array of the first names in the test file
 {
     $TestCSV = 'C:\Users\colli\OneDrive\Documents\LabWork\TestData.csv'
+    $ErrorCounter = 0
 
     $FirstNameFunction = Import-Csv -Path $TestCSV | Select-Object -Property first_name
     $LastNameFunction = Import-Csv -Path $TestCSV | Select-Object -Property last_name
@@ -51,10 +50,10 @@
 }
 
 #Build a User
-function Add-RandomADUser{
+function Add-RandomADUser {
     $RandFirstNames = Get-Random -Maximum ($FirstNames.count + 1)
     $RandLastNames = Get-Random -Maximum ($LastNames.count + 1)
-    $RandomNumberPassword = Get-Random -Maximum 100000 -Minimum 
+    $RandomNumberPassword = Get-Random -Maximum 100000 -Minimum 0
     
     $NewUserFirstName = $FirstNames[$RandFirstNames]
     $NewUserLastName = $LastNames[$RandLastNames]
@@ -62,7 +61,29 @@ function Add-RandomADUser{
 
     $NewUserUPN = "$NewUserFirstName.$NewUserLastName@$Domain"
 
-    { New-ADUser -UserPrincipalName $NewUserUPN -AccountPassword "!!$RandomNumberPassword!!" 
-        -ChangePasswordAtLogon True -GivenName $NewUserFirstName -Surname $NewUserLastName }
+    # if (Check-RandomADUser($NewUserUPN) = -1) {
+    #     Write-Host "Duplicate message detected. Attempting again."
+    #     $ErrorCounter++
+    # }
+    # elseif ($ErrorCounter = 5) {
+    #     Write-Host "Too many failed attempts at account creation. AD has too many duplicate names on the list. Aborting program."
+    #     break
+    # }
+    # else {
+    #     New-ADUser -UserPrincipalName $NewUserUPN -AccountPassword "!!$RandomNumberPassword!!" 
+    #     -ChangePasswordAtLogon True -GivenName $NewUserFirstName -Surname $NewUserLastName 
+    # }
 
-}
+    New-ADUser -UserPrincipalName $NewUserUPN -AccountPassword "!!$RandomNumberPassword!!" 
+    -ChangePasswordAtLogon True -GivenName $NewUserFirstName -Surname $NewUserLastName 
+
+} 
+
+#Check user against existing AD
+# function Check-RandomADUser($tempUPN) {
+#     foreach ($CheckUser in (Get-ADUser *)) {
+#         if ($CheckUser.UserPrincipalName = $tempUPN) {
+#             return -1
+#         }
+#     }
+# }
