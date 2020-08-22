@@ -5,6 +5,13 @@
 # -UPN
 # -Password
 
+#Collect csv file
+# $TestCSV = Read-Host -Prompt "Please enter the location of the csv file: "
+# if ($TestCSV -like '*.csv') {
+#     Write-Host 'File is not a .csv file. Aborting.'
+#     $TestCSV = ''
+# }
+
 #Collect the number of users that need to be created
 try {
     [int]$numberOfUsers = Read-Host -Prompt "Please enter the number of users to be created: "
@@ -14,20 +21,20 @@ catch {
 }
    
 #Get an array of the first names in the test file
-$TestCSV = '.\Data\TestData.csv'
-$ErrorCounter = 0
+$TestCSV = 'T:\Data\TestData.csv'
+# $ErrorCounter = 0
 
 $FirstNameFunction = Import-Csv -Path $TestCSV | Select-Object -Property first_name
 $LastNameFunction = Import-Csv -Path $TestCSV | Select-Object -Property last_name
 $FirstNames = 0..($FirstNameFunction.count - 1)
 $LastNames = 0..($LastNameFunction.count - 1)
-$Domain = '@testing.com'
+$Domain = 'collinsnyderlabs.local'
 
 #Write all the values of the csv into an array $FirstNames
 $index = 0
 foreach ($item in $FirstNameFunction) {
     $FirstNames[$index] = $item.first_name
-    Write-Host 'Current name:' $FirstNames[$index] `n
+    ##Write-Host 'Current name:' $FirstNames[$index] `n
     $index++
 }
 $index = 0
@@ -36,7 +43,7 @@ $index = 0
 $index = 0
 foreach ($item in $LastNameFunction) {
     $LastNames[$index] = $item.last_name
-    Write-Host 'Current name:' $LastNames[$index] `n
+    ##Write-Host 'Current name:' $LastNames[$index] `n
     $index++
 }
 $index = 0
@@ -45,11 +52,11 @@ $index = 0
 function Add-RandomADUser {
     $RandFirstNames = Get-Random -Maximum ($FirstNames.count + 1)
     $RandLastNames = Get-Random -Maximum ($LastNames.count + 1)
-    $RandomNumberPassword = Get-Random -Maximum 100000 -Minimum 0
+    ##$RandomNumberPassword = Get-Random -Maximum 100000 -Minimum 0
     
     $NewUserFirstName = $FirstNames[$RandFirstNames]
     $NewUserLastName = $LastNames[$RandLastNames]
-    $NewUserPassword = $RandomNumberPassword
+    ##$NewUserPassword = $RandomNumberPassword
 
     $NewUserUPN = "$NewUserFirstName.$NewUserLastName@$Domain"
 
@@ -66,9 +73,10 @@ function Add-RandomADUser {
     #     -ChangePasswordAtLogon True -GivenName $NewUserFirstName -Surname $NewUserLastName 
     # }
 
-    New-ADUser -UserPrincipalName $NewUserUPN -AccountPassword "!!$RandomNumberPassword!!" 
-    -ChangePasswordAtLogon True -GivenName $NewUserFirstName -Surname $NewUserLastName 
+    # Write-Host "$NewUserFirstName $NewUserLastName"
+    ##New-ADUser -Name '$NewUserFirstName $NewUserLastName' -UserPrincipalName $NewUserUPN -GivenName $NewUserFirstName -Surname $NewUserLastName
 
+    Write-Host "`nUser created: $NewUserFirstName $NewUserLastName - $NewUserUPN`n"
 } 
 
 #Check user against existing AD
@@ -78,4 +86,10 @@ function Add-RandomADUser {
 #             return -1
 #         }
 #     }
+# }
+
+# while($ErrorCounter -lt 5){
+    for($iteration = 0; $iteration -lt $numberOfUsers; $iteration++){
+        Add-RandomADUser
+    }
 # }
