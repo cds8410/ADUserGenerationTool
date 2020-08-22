@@ -6,48 +6,40 @@
 # -Password
 
 #Collect the number of users that need to be created
-{
-    try {
-        [int]$numberOfUsers = Read-Host -Prompt "Please enter the number of users to be created: "
-    }
-    catch {
-        Write-Host "There was a problem with this entry. Closing"
-    }
+try {
+    [int]$numberOfUsers = Read-Host -Prompt "Please enter the number of users to be created: "
+}
+catch {
+    Write-Host "There was a problem with this entry. Closing"
 }
    
 #Get an array of the first names in the test file
-{
-    $TestCSV = 'C:\Users\colli\OneDrive\Documents\LabWork\TestData.csv'
-    $ErrorCounter = 0
+$TestCSV = '.\Data\TestData.csv'
+$ErrorCounter = 0
 
-    $FirstNameFunction = Import-Csv -Path $TestCSV | Select-Object -Property first_name
-    $LastNameFunction = Import-Csv -Path $TestCSV | Select-Object -Property last_name
-    $FirstNames = 0..($FirstNameFunction.count - 1)
-    $LastNames = 0..($LastNameFunction.count - 1)
-    $Domain = '@testing.com'
-}
+$FirstNameFunction = Import-Csv -Path $TestCSV | Select-Object -Property first_name
+$LastNameFunction = Import-Csv -Path $TestCSV | Select-Object -Property last_name
+$FirstNames = 0..($FirstNameFunction.count - 1)
+$LastNames = 0..($LastNameFunction.count - 1)
+$Domain = '@testing.com'
 
 #Write all the values of the csv into an array $FirstNames
-{
-    $index = 0
-    foreach ($item in $FirstNameFunction) {
-        $FirstNames[$index] = $item.first_name
-        Write-Host 'Current name:' $FirstNames[$index] `n
-        $index++
-    }
-    $index = 0
+$index = 0
+foreach ($item in $FirstNameFunction) {
+    $FirstNames[$index] = $item.first_name
+    Write-Host 'Current name:' $FirstNames[$index] `n
+    $index++
 }
+$index = 0
 
 #Write all the values of the csv into an array $LastNames
-{
-    $index = 0
-    foreach ($item in $LastNameFunction) {
-        $LastNames[$index] = $item.last_name
-        Write-Host 'Current name:' $LastNames[$index] `n
-        $index++
-    }
-    $index = 0
+$index = 0
+foreach ($item in $LastNameFunction) {
+    $LastNames[$index] = $item.last_name
+    Write-Host 'Current name:' $LastNames[$index] `n
+    $index++
 }
+$index = 0
 
 #Build a User
 function Add-RandomADUser {
