@@ -74,7 +74,7 @@ function Add-RandomADUser {
     # }
 
     # Write-Host "$NewUserFirstName $NewUserLastName"
-    ##New-ADUser -Name '$NewUserFirstName $NewUserLastName' -UserPrincipalName $NewUserUPN -GivenName $NewUserFirstName -Surname $NewUserLastName
+    New-ADUser -Name "$NewUserFirstName $NewUserLastName" -UserPrincipalName $NewUserUPN -GivenName $NewUserFirstName -Surname $NewUserLastName
 
     Write-Host "`nUser created: $NewUserFirstName $NewUserLastName - $NewUserUPN`n"
 } 
