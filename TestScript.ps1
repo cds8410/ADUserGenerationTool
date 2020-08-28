@@ -52,7 +52,7 @@ $index = 0
 function Add-RandomADUser {
     $RandFirstNames = Get-Random -Maximum ($FirstNames.count + 1)
     $RandLastNames = Get-Random -Maximum ($LastNames.count + 1)
-    ##$RandomNumberPassword = Get-Random -Maximum 100000 -Minimum 0
+    $RandomNumberPassword = Get-Random -Maximum 100000 -Minimum 0
     
     $NewUserFirstName = $FirstNames[$RandFirstNames]
     $NewUserLastName = $LastNames[$RandLastNames]
@@ -74,9 +74,10 @@ function Add-RandomADUser {
     # }
 
     # Write-Host "$NewUserFirstName $NewUserLastName"
-    New-ADUser -Name "$NewUserFirstName $NewUserLastName" -UserPrincipalName $NewUserUPN -GivenName $NewUserFirstName -Surname $NewUserLastName
+    New-ADUser -Name "$NewUserFirstName $NewUserLastName" -UserPrincipalName $NewUserUPN -GivenName $NewUserFirstName -Surname $NewUserLastName -AccountPassword (ConvertTo-SecureString -String "!!AXm$RandomNumberPassword!!" -AsPlainText -Force)
 
-    Write-Host "`nUser created: $NewUserFirstName $NewUserLastName - $NewUserUPN`n"
+    Write-Host "`nUser created: $NewUserFirstName $NewUserLastName - $NewUserUPN"
+    Write-Host "Temp Account Password: !!AXm$RandomNumberPassword!!`n"
 } 
 
 #Check user against existing AD
@@ -89,7 +90,9 @@ function Add-RandomADUser {
 # }
 
 # while($ErrorCounter -lt 5){
+    Start-Transcript -Path "T:\PasswordOutput.txt"
     for($iteration = 0; $iteration -lt $numberOfUsers; $iteration++){
         Add-RandomADUser
     }
+    Stop-Transcript
 # }
